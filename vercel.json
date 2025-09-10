@@ -6,20 +6,6 @@
       "use": "@vercel/next"
     }
   ],
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
-    },
-    "app/api/chat/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/conversations/auto-respond/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/cron/route.ts": {
-      "maxDuration": 30
-    }
-  },
   "env": {
     "NODE_ENV": "production"
   },
