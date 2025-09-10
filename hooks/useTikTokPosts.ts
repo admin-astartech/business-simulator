@@ -36,14 +36,6 @@ export function useTikTokPosts(): UseTikTokPostsReturn {
 
   useEffect(() => {
     fetchPosts()
-    
-    // Set up auto-refresh every minute (60000ms)
-    const interval = setInterval(() => {
-      fetchPosts()
-    }, 60000)
-    
-    // Cleanup interval on unmount
-    return () => clearInterval(interval)
   }, [])
 
   return {

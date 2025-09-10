@@ -30,6 +30,7 @@ export async function GET() {
     const totalCitizens = allCitizens.length
     
     return NextResponse.json({
+      success: true,
       totalCitizens,
       citizens: allCitizens
     })
@@ -41,6 +42,7 @@ export async function GET() {
     const totalCitizens = citizensData.length
     
     return NextResponse.json({
+      success: true,
       totalCitizens,
       citizens: citizensData.map(citizen => ({
         ...citizen,

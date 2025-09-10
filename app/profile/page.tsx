@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import ErrorMessage from '@/components/ui/ErrorMessage'
 import { getCitizenImage } from '@/lib/citizen'
 import Image from 'next/image'
+import Button from '@/components/buttons/button'
 
 export default function ProfilePage() {
   const {
@@ -104,13 +105,12 @@ export default function ProfilePage() {
                   <div className="flex space-x-2">
                     {isEditing ? (
                       <>
-                        <button
+                        <Button
                           onClick={handleSave}
                           disabled={loading}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {loading ? 'Saving...' : 'Save'}
-                        </button>
+                        </Button>
                         <button
                           onClick={handleCancel}
                           disabled={loading}
@@ -120,12 +120,11 @@ export default function ProfilePage() {
                         </button>
                       </>
                     ) : (
-                      <button
+                      <Button
                         onClick={() => setIsEditing(true)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                       >
                         Edit Profile
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

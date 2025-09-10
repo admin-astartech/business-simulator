@@ -27,6 +27,8 @@ export interface SocialPost {
   platform?: string
   // Only store citizen ID, fetch citizen data when needed
   citizenId?: string
+  // Store hashtags array
+  hashtags?: string[]
   // Track which users have liked this post
   likedBy?: string[]
   // Store comments array

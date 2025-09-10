@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Settings, Clock, Activity, Users, MessageCircle, Smartphone, RefreshCw, Database, AlertCircle } from 'lucide-react'
 import { useSettings } from '@/hooks/useSettings'
-import { AppSettings, CronSchedule } from '@/types/settings'
+import { CronSchedule } from '@/types/settings'
+import Button from '@/components/buttons/button'
 
 interface ScheduleInfo {
   name: string
@@ -111,12 +112,11 @@ export default function SettingsPage() {
             <h2 className="text-lg font-semibold text-red-900">Error Loading Settings</h2>
           </div>
           <p className="text-red-700 mb-4">{error}</p>
-          <button
+          <Button
             onClick={fetchSettings}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Retry
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -256,7 +256,7 @@ export default function SettingsPage() {
               About CRON Schedules
             </h4>
             <p className="text-sm text-blue-700">
-              These schedules control automated tasks in your Earth Simulator. 
+              These schedules control automated tasks in your Business Simulator. 
               All times are based on your server's timezone. Schedules run continuously 
               in the background to keep your simulation active and engaging.
             </p>

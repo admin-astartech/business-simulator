@@ -13,7 +13,10 @@ import {
   ChevronRight,
   ChevronDown,
   Earth,
-  Settings
+  Settings,
+  Briefcase,
+  Camera,
+  Music
 } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useUnreadCitizenMessages } from '../hooks/useUnreadCitizenMessages'
@@ -39,7 +42,9 @@ const menuItems = [
     icon: Smartphone, 
     hasSubmenu: true,
     submenu: [
-      { name: 'Platforms', href: '/social-media', icon: Smartphone },
+      { name: 'LinkedIn', href: '/linkedin', icon: Briefcase },
+      { name: 'Instagram', href: '/instagram', icon: Camera },
+      { name: 'TikTok', href: '/tiktok', icon: Music },
       { name: 'Messages', href: '/conversations', icon: MessageCircle }
     ]
   },
@@ -115,12 +120,9 @@ export default function Sidebar() {
       {/* Header - Company Branding */}
       <div className="p-6 border-b border-[#333270]">
         <div className="flex items-center">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-          <Image src="/Earth.jpg" alt="logo" width={40} height={40} />
-          </div>
           {!isCollapsed && (
-            <div className="ml-3">
-              <h2 className="text-xl font-bold">Earth Simulator</h2>
+            <div className="">
+              <h2 className="text-xl font-bold">Business Simulator</h2>
               <p className="text-xs text-white/70 mt-1">
                 {formatDateTime(currentDateTime)}
               </p>

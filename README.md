@@ -1,4 +1,4 @@
-# Earth Simulator
+# Business Simulator
 
 A simple Next.js application with Tailwind CSS.
 

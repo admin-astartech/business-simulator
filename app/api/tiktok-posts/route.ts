@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDatabase } from '@/lib/mongodb'
+import { ObjectId } from 'mongodb'
 
 export async function GET() {
   try {
@@ -9,23 +10,32 @@ export async function GET() {
     // Fetch TikTok posts from MongoDB
     const posts = await collection.find({}).sort({ createdAt: -1 }).toArray()
     
+    // Get all unique citizen IDs from posts
+    const citizenIds = Array.from(new Set(posts.map(post => post.citizenId).filter(Boolean)))
+    
+    // Fetch citizen data for all posts
+    const citizensCollection = db.collection('citizens')
+    const citizens = await citizensCollection.find({ id: { $in: citizenIds } }).toArray()
+    const citizensMap = new Map(citizens.map(citizen => [citizen.id, citizen]))
+    
     // Transform MongoDB documents to match our SocialPost interface
-    const transformedPosts = posts.map(post => ({
-      id: post._id.toString(),
-      content: post.content,
-      likes: post.likes || 0,
-      comments: post.comments || 0,
-      shares: post.shares || 0,
-      time: formatTimeAgo(post.createdAt),
-      author: post.author || 'Unknown',
-      platform: 'tiktok',
-      // Only include citizen ID
-      citizenId: post.citizenId,
-      // Include likedBy array
-      likedBy: post.likedBy || [],
-      // Include comments array
-      commentsList: post.commentsList || []
-    }))
+    const transformedPosts = posts.map(post => {
+      const citizen = citizensMap.get(post.citizenId)
+      return {
+        id: post._id.toString(),
+        content: post.content,
+        likes: post.likes || 0,
+        comments: post.comments || 0,
+        shares: post.shares || 0,
+        time: formatTimeAgo(post.createdAt),
+        author: citizen ? citizen.name : 'Unknown',
+        platform: 'tiktok',
+        citizenId: post.citizenId,
+        hashtags: post.hashtags || [],
+        likedBy: post.likedBy || [],
+        commentsList: post.commentsList || []
+      }
+    })
     
     return NextResponse.json({
       success: true,
@@ -47,13 +57,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { content, author, hashtags, citizenId } = body
+    const { content, hashtags, citizenId } = body
     
-    if (!content || !author) {
+    if (!content || !citizenId) {
       return NextResponse.json(
         { 
           success: false,
-          error: 'Content and author are required' 
+          error: 'Content and citizenId are required' 
         },
         { status: 400 }
       )
@@ -65,9 +75,8 @@ export async function POST(request: NextRequest) {
     // Create the post document
     const postData = {
       content,
-      author,
       hashtags: hashtags || [],
-      citizenId: citizenId || null,
+      citizenId: citizenId,
       likes: 0,
       comments: 0,
       shares: 0,
@@ -93,6 +102,70 @@ export async function POST(request: NextRequest) {
       { 
         success: false,
         error: 'Failed to save TikTok post to database' 
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const postId = searchParams.get('id')
+    
+    if (!postId) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Post ID is required' 
+        },
+        { status: 400 }
+      )
+    }
+
+    const db = await getDatabase()
+    const collection = db.collection('tiktok-posts')
+    
+    // Convert postId to ObjectId
+    let objectId
+    try {
+      objectId = new ObjectId(postId)
+    } catch (error) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Invalid post ID format' 
+        },
+        { status: 400 }
+      )
+    }
+    
+    // Delete the post
+    const result = await collection.deleteOne({ _id: objectId })
+    
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Post not found' 
+        },
+        { status: 404 }
+      )
+    }
+    
+    console.log(`✅ TikTok post deleted: ${postId}`)
+    
+    return NextResponse.json({
+      success: true,
+      message: 'TikTok post deleted successfully'
+    })
+    
+  } catch (error) {
+    console.error('Error deleting TikTok post:', error)
+    return NextResponse.json(
+      { 
+        success: false,
+        error: 'Failed to delete TikTok post' 
       },
       { status: 500 }
     )

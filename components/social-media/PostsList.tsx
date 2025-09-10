@@ -1,8 +1,8 @@
 import { SocialPost } from '@/types/socialMedia'
 import { Citizen } from '@/types/citizens'
-import { FileText, Heart, MessageCircle, Loader2, BarChart3, MessageSquare } from 'lucide-react'
+import { FileText, Heart, MessageCircle, Loader2, BarChart3, MessageSquare, MoreVertical, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import { getCitizenImage, fetchCitizensByIds } from '@/lib/citizen'
+import { getCitizenImage } from '@/lib/citizen'
 import { useEffect, useState } from 'react'
 import { useProfile } from '@/hooks/useProfile'
 import CitizenChatModal from '@/components/citizens/CitizenChatModal'
@@ -11,7 +11,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   Typography,
   Box,
   Chip,
@@ -23,12 +22,17 @@ import {
   Divider,
   CircularProgress
 } from '@mui/material'
+import Button from '@/components/buttons/button'
+import DeletePostModal from './DeletePostModal'
 
 interface PostsListProps {
   posts: SocialPost[]
   title: string
   showShares?: boolean
   onRefetch?: () => void
+  onCreatePost?: () => void
+  showCreateButton?: boolean
+  onDeletePost?: (postId: string) => Promise<void>
 }
 
 interface EngagementReason {
@@ -40,7 +44,7 @@ interface EngagementReason {
   timestamp: string
 }
 
-export default function PostsList({ posts, title, showShares = false, onRefetch }: PostsListProps) {
+export default function PostsList({ posts, title, showShares = false, onRefetch, onCreatePost, showCreateButton = false, onDeletePost }: PostsListProps) {
   const [citizens, setCitizens] = useState<Map<string, Citizen>>(new Map())
   const [citizensLoading, setCitizensLoading] = useState(false)
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set())
@@ -55,7 +59,21 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
   const [loadingEngagement, setLoadingEngagement] = useState(false)
   const [chatModalOpen, setChatModalOpen] = useState(false)
   const [selectedCitizen, setSelectedCitizen] = useState<Citizen | null>(null)
-  const { profile } = useProfile()
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [postToDelete, setPostToDelete] = useState<SocialPost | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const { profile, fetchProfile } = useProfile()
+
+  // Refresh profile data when posts change to ensure we have the latest user info
+  useEffect(() => {
+    if (posts.length > 0) {
+      // Only refresh if we don't have profile data or if there are user posts
+      const hasUserPosts = posts.some(post => profile && post.author === profile.name)
+      if (!profile || hasUserPosts) {
+        fetchProfile()
+      }
+    }
+  }, [posts, fetchProfile, profile])
 
   // Fetch citizen data for all posts with citizenId and comment authors
   useEffect(() => {
@@ -89,18 +107,18 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
 
         const data = await response.json()
         const allCitizens = data.citizens || []
-        
+
         // Filter to only the citizens we need
-        const citizensData = allCitizens.filter((citizen: Citizen) => 
+        const citizensData = allCitizens.filter((citizen: Citizen) =>
           allCitizenIds.includes(citizen.id)
         )
-        
+
         const citizensMap = new Map<string, Citizen>()
-        
+
         citizensData.forEach((citizen: Citizen) => {
           citizensMap.set(citizen.id, citizen)
         })
-        
+
         setCitizens(citizensMap)
       } catch (error) {
         console.error('Error fetching citizen data:', error)
@@ -138,6 +156,50 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
   const getCitizenForPost = (post: SocialPost): Citizen | null => {
     if (!post.citizenId) return null
     return citizens.get(post.citizenId) || null
+  }
+
+  const isUserPost = (post: SocialPost): boolean => {
+    return profile ? post.citizenId === profile.id : false
+  }
+
+  // Filter out hashtags from post content to avoid duplication
+  const getFilteredContent = (post: SocialPost): string => {
+    if (!post.hashtags || post.hashtags.length === 0) {
+      return post.content
+    }
+    
+    let filteredContent = post.content
+    
+    // Debug: Log the original content and hashtags
+    if (post.content.includes('#')) {
+      console.log('🔍 Filtering hashtags from content:')
+      console.log('  Original:', post.content)
+      console.log('  Hashtags array:', post.hashtags)
+    }
+    
+    // Remove each hashtag from the content
+    post.hashtags.forEach(tag => {
+      // Remove # from tag if it exists (since hashtags are stored with # in database)
+      const cleanTag = tag.startsWith('#') ? tag.substring(1) : tag
+      // Create a simple regex to match the hashtag
+      const hashtagRegex = new RegExp(`#${cleanTag}`, 'gi')
+      const beforeReplace = filteredContent
+      filteredContent = filteredContent.replace(hashtagRegex, '')
+      
+      if (beforeReplace !== filteredContent) {
+        console.log(`  ✅ Removed #${cleanTag}: "${beforeReplace}" -> "${filteredContent}"`)
+      }
+    })
+    
+    // Clean up multiple spaces and trim
+    const cleanedContent = filteredContent.replace(/\s+/g, ' ').trim()
+    
+    if (post.content.includes('#')) {
+      console.log('  Final result:', cleanedContent)
+    }
+    
+    // If content becomes empty after filtering, show original content
+    return cleanedContent || post.content
   }
 
   const handleLikeToggle = async (post: SocialPost) => {
@@ -240,6 +302,34 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
   const handleCloseChat = () => {
     setChatModalOpen(false)
     setSelectedCitizen(null)
+  }
+
+  const handleDeletePost = async (postId: string) => {
+    if (!onDeletePost) return
+
+    try {
+      setIsDeleting(true)
+      await onDeletePost(postId)
+      setDeleteModalOpen(false)
+      setPostToDelete(null)
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      throw error
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const openDeleteModal = (post: SocialPost) => {
+    setPostToDelete(post)
+    setDeleteModalOpen(true)
+  }
+
+  const closeDeleteModal = () => {
+    if (!isDeleting) {
+      setDeleteModalOpen(false)
+      setPostToDelete(null)
+    }
   }
 
   const awardXP = async (xpAmount: number) => {
@@ -420,12 +510,27 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-          {citizensLoading && (
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-gray-600 rounded-full"></div>
-              <span>Loading...</span>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            {citizensLoading ? (
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-gray-600 rounded-full"></div>
+                <span>Loading...</span>
+              </div>
+            ) : (
+              <>
+                {showCreateButton && onCreatePost && (
+                  <Button
+                    onClick={onCreatePost}
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Create Post
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
       <div className="p-6">
@@ -449,11 +554,40 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
           <div className="space-y-4 transition-all duration-300">
             {posts.map((post) => {
               const citizen = getCitizenForPost(post)
+              const isUser = isUserPost(post)
 
               return (
                 <div key={post.id} className="p-4 border border-gray-200 rounded-lg transition-all duration-200 hover:shadow-md">
-                  {/* Citizen Header */}
-                  {citizen ? (
+                  {/* Post Header - Prioritize user profile data for user posts */}
+                  {isUser && profile ? (
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="flex-shrink-0">
+                        <div className={`h-10 w-10 rounded-full ${profile.avatarColor || 'bg-blue-500'} flex items-center justify-center`}>
+                          <Image
+                            src={getCitizenImage(profile.name, profile.gender)}
+                            alt={profile.name}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2">
+                          <h4 className="text-sm font-semibold text-gray-900 truncate">{profile.name}</h4>
+                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                            You
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 truncate">
+                          {profile.role || 'Author'}
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <span className="text-xs text-gray-500">{post.time}</span>
+                      </div>
+                    </div>
+                  ) : citizen ? (
                     <div className="flex items-center space-x-3 mb-3">
                       <div className="flex-shrink-0">
                         <div className={`h-10 w-10 rounded-full ${citizen.avatarColor || 'bg-gray-200'} flex items-center justify-center`}>
@@ -469,10 +603,15 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2">
                           <h4 className="text-sm font-semibold text-gray-900 truncate">{citizen.name}</h4>
+                          {profile && post.author === profile.name && (
+                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                              You
+                            </span>
+                          )}
                           {citizen.isOnline !== undefined && (
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${citizen.isOnline
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-600'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-600'
                               }`}>
                               {citizen.isOnline ? '🟢 Online' : '⚫ Offline'}
                             </span>
@@ -507,8 +646,8 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                     </div>
                   ) : null}
 
-                  {/* Fallback for posts without citizen data */}
-                  {!citizen && !citizensLoading && post.author && (
+                  {/* Fallback for posts without citizen data (non-user posts) */}
+                  {!isUser && !citizen && !citizensLoading && post.author && (
                     <div className="flex items-center space-x-3 mb-3">
                       <div className="flex-shrink-0">
                         <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
@@ -518,7 +657,9 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-semibold text-gray-900 truncate">{post.author}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-semibold text-gray-900 truncate">{post.author}</h4>
+                        </div>
                         <p className="text-xs text-gray-600 truncate">Author</p>
                       </div>
                       <div className="flex-shrink-0">
@@ -528,7 +669,35 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                   )}
 
                   {/* Post Content */}
-                  <p className="text-sm text-gray-700 mb-3 whitespace-pre-wrap">{post.content}</p>
+                  <div className="flex items-start justify-between mb-3">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap flex-1">{getFilteredContent(post)}</p>
+                    {/* Delete button for user's own posts */}
+                    {isUser && onDeletePost && (
+                      <button
+                        onClick={() => openDeleteModal(post)}
+                        className="ml-3 p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        title="Delete post"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Hashtags */}
+                  {post.hashtags && post.hashtags.length > 0 && (
+                    <div className="mb-3">
+                      <div className="flex flex-wrap gap-1">
+                        {post.hashtags.map((hashtag, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors cursor-pointer"
+                          >
+                            {hashtag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Engagement Stats */}
                   <div className="flex items-center justify-between">
@@ -537,8 +706,8 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                         onClick={() => handleLikeToggle(post)}
                         disabled={updatingLikes.has(String(post.id)) || !profile?.id}
                         className={`flex items-center space-x-1 px-2 py-1 rounded-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:opacity-50 disabled:cursor-not-allowed ${likedPosts.has(String(post.id))
-                            ? 'text-red-500 hover:text-red-600 bg-red-50'
-                            : 'text-gray-500 hover:text-red-500 hover:bg-gray-50'
+                          ? 'text-red-500 hover:text-red-600 bg-red-50'
+                          : 'text-gray-500 hover:text-red-500 hover:bg-gray-50'
                           }`}
                         aria-label={`${likedPosts.has(String(post.id)) ? 'Unlike' : 'Like'} this post`}
                       >
@@ -547,8 +716,8 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                         ) : (
                           <Heart
                             className={`w-4 h-4 ${likedPosts.has(String(post.id))
-                                ? 'fill-red-500 text-red-500'
-                                : 'text-gray-500'
+                              ? 'fill-red-500 text-red-500'
+                              : 'text-gray-500'
                               }`}
                           />
                         )}
@@ -558,8 +727,8 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
                         onClick={() => handleCommentToggle(post)}
                         disabled={updatingComments.has(String(post.id)) || !profile?.id}
                         className={`flex items-center space-x-1 px-2 py-1 rounded-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed ${commentedPosts.has(String(post.id))
-                            ? 'text-blue-500 hover:text-blue-600 bg-blue-50'
-                            : 'text-gray-500 hover:text-blue-500 hover:bg-gray-50'
+                          ? 'text-blue-500 hover:text-blue-600 bg-blue-50'
+                          : 'text-gray-500 hover:text-blue-500 hover:bg-gray-50'
                           }`}
                         aria-label={`${commentedPosts.has(String(post.id)) ? 'Remove comment' : 'Add comment'} to this post`}
                       >
@@ -805,7 +974,7 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAnalyticsModal} color="primary">
+          <Button onClick={handleCloseAnalyticsModal}>
             Close
           </Button>
         </DialogActions>
@@ -817,6 +986,17 @@ export default function PostsList({ posts, title, showShares = false, onRefetch 
           open={chatModalOpen}
           onClose={handleCloseChat}
           citizen={selectedCitizen}
+        />
+      )}
+
+      {/* Delete Post Modal */}
+      {postToDelete && (
+        <DeletePostModal
+          isOpen={deleteModalOpen}
+          onClose={closeDeleteModal}
+          onConfirm={() => handleDeletePost(postToDelete.id.toString())}
+          postContent={postToDelete.content}
+          isDeleting={isDeleting}
         />
       )}
     </div>

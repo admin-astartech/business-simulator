@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Citizen } from '@/types/citizens'
 
 interface UseCitizensForSocialReturn {
@@ -14,7 +14,6 @@ export function useCitizensForSocial(): UseCitizensForSocialReturn {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const fetchCitizens = async (isInitialLoad = false) => {
     try {
@@ -44,44 +43,8 @@ export function useCitizensForSocial(): UseCitizensForSocialReturn {
   }
 
   useEffect(() => {
-    // Initial fetch
+    // Initial fetch only
     fetchCitizens(true)
-
-    // Set up auto-refresh every minute (60000ms)
-    intervalRef.current = setInterval(() => {
-      fetchCitizens(false)
-    }, 60000)
-
-    // Listen for citizen status change events
-    const handleCitizenDataUpdated = () => {
-      console.log('🔄 Citizen data updated event received in social hook, refetching...')
-      fetchCitizens(false)
-    }
-
-    const handleCitizensCameOnline = (event: CustomEvent) => {
-      console.log('🟢 Citizens came online event received in social hook, refetching...', event.detail)
-      fetchCitizens(false)
-    }
-
-    const handleCitizensWentOffline = (event: CustomEvent) => {
-      console.log('⚫ Citizens went offline event received in social hook, refetching...', event.detail)
-      fetchCitizens(false)
-    }
-
-    // Add event listeners
-    window.addEventListener('citizenDataUpdated', handleCitizenDataUpdated)
-    window.addEventListener('citizensCameOnline', handleCitizensCameOnline as EventListener)
-    window.addEventListener('citizensWentOffline', handleCitizensWentOffline as EventListener)
-
-    // Cleanup interval and event listeners on unmount
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-      window.removeEventListener('citizenDataUpdated', handleCitizenDataUpdated)
-      window.removeEventListener('citizensCameOnline', handleCitizensCameOnline as EventListener)
-      window.removeEventListener('citizensWentOffline', handleCitizensWentOffline as EventListener)
-    }
   }, [])
 
   return {

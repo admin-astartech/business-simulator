@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:no-cron": "NEXT_PUBLIC_AUTO_START_CRON=false next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -11,15 +12,22 @@
     "postbuild": "next-sitemap",
     "update-gender": "tsx scripts/updateCitizensGender.ts",
     "populate-citizens": "tsx scripts/populateCitizens.ts",
-    "test-gender": "tsx scripts/testGenderDetection.ts"
+    "test-gender": "tsx scripts/testGenderDetection.ts",
+    "test-cron": "node scripts/testExternalCron.js",
+    "cron:run": "curl -X GET http://localhost:3000/api/cron-trigger",
+    "cron:status": "curl -X GET http://localhost:3000/api/external-cron",
+    "update-linkedin-connections": "node scripts/updateLinkedInConnections.js",
+    "update-linkedin-connections:ts": "tsx scripts/updateLinkedInConnections.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
+    "@tailwindcss/postcss": "^4.1.13",
     "@types/moment": "^2.11.29",
     "@types/node-cron": "^3.0.11",
+    "@vercel/analytics": "^1.5.0",
     "dotenv": "^17.2.2",
     "lucide-react": "^0.543.0",
     "moment": "^2.30.1",
@@ -35,12 +43,13 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "autoprefixer": "^10.4.16",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.0.0",
     "eslint-config-next": "14.0.0",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
     "tsx": "^4.20.5",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vite": "^6.3.6"
   }
 }

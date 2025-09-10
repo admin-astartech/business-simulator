@@ -6,16 +6,11 @@ import { Citizen } from '@/types/citizens'
 export const CRON_CONFIG = {
   // Cron schedules
   SCHEDULES: {
-    // Status update: runs every minute
-    STATUS_UPDATE: '* * * * *',
-    // Online citizens display: runs every minute
-    ONLINE_DISPLAY: '* * * * *',
-    // Social media posts: runs every 8 minutes
-    SOCIAL_MEDIA_POSTS: '*/10 * * * *',
-    // Citizen engagement: runs every 2 minutes
-    CITIZEN_ENGAGEMENT: '*/5 * * * *',
-    // Citizen commenting: runs every 3 minutes
-    CITIZEN_COMMENTING: '*/10 * * * *'
+    STATUS_UPDATE: '* */10 * * *', // Every 10 minutes
+    ONLINE_DISPLAY: '* */10 * * *', // Every 10 minutes
+    SOCIAL_MEDIA_POSTS: '*/10 * * * *', // Every 10 minutes
+    CITIZEN_ENGAGEMENT: '*/10 * * * *', // Every 10 minutes
+    CITIZEN_COMMENTING: '*/10 * * * *', // Every 10 minutes
   },
   // Percentage of citizens to update (30%)
   UPDATE_PERCENTAGE: 0.3,

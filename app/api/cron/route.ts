@@ -62,9 +62,25 @@ export async function POST(request: NextRequest) {
           message: 'Service status retrieved'
         })
       
+      case 'start':
+        // For compatibility with CronInitializer - just run all tasks
+        const startResults = await cronService.runAllTasks()
+        return NextResponse.json({
+          success: startResults.success,
+          message: 'Cron service started and tasks executed',
+          results: startResults.results
+        })
+      
+      case 'stop':
+        // For compatibility with CronInitializer - just return success
+        return NextResponse.json({
+          success: true,
+          message: 'Cron service stopped (serverless mode)'
+        })
+      
       default:
         return NextResponse.json(
-          { success: false, error: 'Invalid action. Use "runAll", "runTask", or "status"' },
+          { success: false, error: 'Invalid action. Use "runAll", "runTask", "status", "start", or "stop"' },
           { status: 400 }
         )
     }

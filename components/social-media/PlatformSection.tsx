@@ -7,6 +7,9 @@ interface PlatformSectionProps {
   postsTitle: string
   showShares?: boolean
   onRefetch?: () => void
+  onCreatePost?: () => void
+  showCreateButton?: boolean
+  onDeletePost?: (postId: string) => Promise<void>
 }
 
 export default function PlatformSection({ 
@@ -14,21 +17,22 @@ export default function PlatformSection({
   posts, 
   postsTitle, 
   showShares = false,
-  onRefetch
+  onRefetch,
+  onCreatePost,
+  showCreateButton = false,
+  onDeletePost
 }: PlatformSectionProps) {
-  const stats = [
-    { label: 'Posts', value: platform.posts },
-    { label: 'Engagement', value: platform.engagement, color: 'text-green-600' },
-    { 
-      label: platform.name === 'TikTok' ? 'Videos' : 'Connections', 
-      value: platform.name === 'TikTok' ? '23' : '156',
-      color: platform.name === 'TikTok' ? 'text-pink-600' : 'text-blue-600'
-    }
-  ]
-
   return (
     <div className="space-y-6">
-      <PostsList posts={posts} title={postsTitle} showShares={showShares} onRefetch={onRefetch} />
+      <PostsList 
+        posts={posts} 
+        title={postsTitle} 
+        showShares={showShares} 
+        onRefetch={onRefetch}
+        onCreatePost={onCreatePost}
+        showCreateButton={showCreateButton}
+        onDeletePost={onDeletePost}
+      />
     </div>
   )
 }
