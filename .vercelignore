@@ -111,4 +111,5 @@ __tests__/
 # Data files (if they're large)
 data/
 !data/citizens.ts
+!data/citizensBankAccount.ts
 !data/socialMediaData.ts

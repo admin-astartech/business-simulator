@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { socialPlatforms, platformPosts } from '@/data/socialMediaData'
 import { transformCitizensToLinkedInProfiles, transformCitizensToTikTokProfiles, transformCitizensToInstagramProfiles } from '@/lib/socialMediaUtils'
 import { useLinkedInPosts } from '@/hooks/useLinkedInPosts'
 import { useTikTokPosts } from '@/hooks/useTikTokPosts'
@@ -15,6 +14,7 @@ import TikTokAccountsSection from '@/components/social-media/TikTokAccountsSecti
 import InstagramAccountsSection from '@/components/social-media/InstagramAccountsSection'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import ErrorMessage from '@/components/ui/ErrorMessage'
+import { socialPlatforms } from '@/data/socialMediaData'
 
 export default function SocialMediaPage() {
   const [activeTab, setActiveTab] = useState('linkedin')
