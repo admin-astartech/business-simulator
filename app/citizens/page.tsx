@@ -1,148 +1,119 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useCitizens } from '@/hooks/useCitizens'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import ErrorMessage from '@/components/ui/ErrorMessage'
+import CitizensStats from '@/components/citizens/CitizensStats'
+import CitizensTable from '@/components/citizens/CitizensTable'
+import CitizenDetailView from '@/components/citizens/CitizenDetailView'
+import { Citizen } from '@/types/citizens'
+
 export default function Citizens() {
+  const { data, loading, error, isRefreshing } = useCitizens()
+  const [selectedCitizen, setSelectedCitizen] = useState<Citizen | null>(null)
+
+  // Handle notification clicks
+  useEffect(() => {
+    const handleNotificationClick = (event: CustomEvent) => {
+      const { citizenId, citizenName, type } = event.detail
+      
+      if (type === 'auto-response' && data?.citizens) {
+        // Find the citizen by ID
+        const citizen = data.citizens.find(c => c.id === citizenId)
+        if (citizen) {
+          console.log(`📱 Notification clicked: Opening conversation with ${citizenName}`)
+          setSelectedCitizen(citizen)
+        }
+      }
+    }
+
+    // Listen for notification click events
+    window.addEventListener('notificationClicked', handleNotificationClick as EventListener)
+
+    return () => {
+      window.removeEventListener('notificationClicked', handleNotificationClick as EventListener)
+    }
+  }, [data?.citizens])
+
+  // const prompt = selectedCitizen ? getCitizenPrompt(selectedCitizen) : null
+
+  // console.log(prompt)
+  if (loading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <LoadingSpinner message="Loading citizens data..." />
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <ErrorMessage message={error} />
+        </div>
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <ErrorMessage message="No data available" />
+        </div>
+      </div>
+    )
+  }
+
+  const handleCitizenSelect = (citizen: Citizen) => {
+    setSelectedCitizen(citizen)
+  }
+
+  const handleBackToList = () => {
+    setSelectedCitizen(null)
+  }
+
   return (
     <div className="p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          Citizens Management
-        </h1>
-        <p className="text-lg text-gray-600 mb-8">
-          Manage and oversee the citizens in your business simulation.
-        </p>
-        
-        {/* Total Citizens Count */}
-        <div className="mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md max-w-xs">
-            <div className="flex items-center">
-              <div className="p-3 rounded-full bg-blue-100 text-blue-600">
-                <span className="text-2xl">👥</span>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Citizens</p>
-                <p className="text-2xl font-bold text-gray-900">1,234</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Citizens Table */}
-        <div className="bg-white rounded-lg shadow-md">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800">Citizens List</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Last Active
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                          <span className="text-sm font-medium text-white">JD</span>
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">John Doe</div>
-                        <div className="text-sm text-gray-500">john.doe@example.com</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    #001
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      Active
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    Manager
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    2 hours ago
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-purple-500 flex items-center justify-center">
-                          <span className="text-sm font-medium text-white">JS</span>
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">Jane Smith</div>
-                        <div className="text-sm text-gray-500">jane.smith@example.com</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    #002
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                      Pending
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    Employee
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    1 day ago
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center">
-                          <span className="text-sm font-medium text-white">MJ</span>
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">Mike Johnson</div>
-                        <div className="text-sm text-gray-500">mike.johnson@example.com</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    #003
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      Active
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    Developer
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    30 minutes ago
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <PageHeader isRefreshing={isRefreshing} />
+        <CitizensStats totalCitizens={data.totalCitizens} citizens={data.citizens} />
+        {selectedCitizen ? (
+          <CitizenDetailView citizen={selectedCitizen} onBack={handleBackToList} />
+        ) : (
+          <CitizensTable citizens={data.citizens} onCitizenSelect={handleCitizenSelect} />
+        )}
       </div>
     </div>
+  )
+}
+
+function PageHeader({ isRefreshing }: { isRefreshing?: boolean }) {
+  return (
+    <>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-4xl font-bold text-gray-900">
+          Citizens Management
+        </h1>
+        {isRefreshing && (
+          <div className="flex items-center text-sm text-blue-600">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+            Refreshing data...
+          </div>
+        )}
+      </div>
+      <p className="text-lg text-gray-600 mb-8">
+        Manage and oversee the citizens in your business simulation.
+        {isRefreshing && (
+          <span className="ml-2 text-sm text-blue-600">
+            (Auto-refreshing every minute)
+          </span>
+        )}
+      </p>
+    </>
   )
 }
