@@ -17,7 +17,8 @@ export function transformCitizensToLinkedInProfiles(citizens: Citizen[]): Linked
       avatarColor: citizen.avatarColor,
       initials: citizen.initials,
       isOnline: citizen.isOnline,
-      lastSeen: citizen.lastSeen
+      lastSeen: citizen.lastSeen,
+      gender: citizen.gender
     }))
 }
 
@@ -41,7 +42,8 @@ export function transformCitizensToTikTokProfiles(citizens: Citizen[]): TikTokPr
       avatarColor: citizen.avatarColor,
       initials: citizen.initials,
       isOnline: citizen.isOnline,
-      lastSeen: citizen.lastSeen
+      lastSeen: citizen.lastSeen,
+      gender: citizen.gender
     }))
 }
 
@@ -70,6 +72,7 @@ export function transformCitizensToInstagramProfiles(citizens: Citizen[]): Insta
       avatarColor: citizen.avatarColor,
       initials: citizen.initials,
       isOnline: citizen.isOnline,
-      lastSeen: citizen.lastSeen
+      lastSeen: citizen.lastSeen,
+      gender: citizen.gender
     }))
 }

@@ -23,11 +23,11 @@ export async function POST(request: NextRequest) {
     }
     
     // Select a random citizen
-    const randomCitizen = allCitizens[Math.floor(Math.random() * allCitizens.length)]
+    const randomCitizen = allCitizens[Math.floor(Math.random() * allCitizens.length)] as any
     console.log(`👤 Selected citizen: ${randomCitizen.name} (${randomCitizen.role})`)
     
     // Generate a social media post
-    const socialPost = SocialMediaPostGenerator.generatePost(randomCitizen)
+    const socialPost = await SocialMediaPostGenerator.generatePost(randomCitizen)
     console.log(`📱 Generated ${socialPost.platform} post`)
     
     // Determine the correct collection
@@ -55,9 +55,9 @@ export async function POST(request: NextRequest) {
       citizenName: socialPost.citizen.name,
       citizenRole: socialPost.citizen.role,
       citizenCompany: socialPost.citizen.company,
-      citizenGender: socialPost.citizen.gender,
-      citizenAvatarColor: socialPost.citizen.avatarColor,
-      citizenIsOnline: socialPost.citizen.isOnline,
+      citizenGender: randomCitizen.gender,
+      citizenAvatarColor: randomCitizen.avatarColor,
+      citizenIsOnline: randomCitizen.isOnline,
       likes: 0,
       comments: 0,
       shares: 0,
@@ -124,8 +124,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: false,
-        error: 'Test failed: ' + error.message,
-        details: error.stack
+        error: 'Test failed: ' + (error instanceof Error ? error.message : String(error)),
+        details: error instanceof Error ? error.stack : undefined
       },
       { status: 500 }
     )
@@ -138,7 +138,7 @@ export async function GET() {
     
     const db = await getDatabase()
     const collections = ['linkedin-posts', 'tiktok-posts', 'instagram-posts']
-    const results = {}
+    const results: { [key: string]: any } = {}
     
     for (const collectionName of collections) {
       try {
@@ -161,7 +161,7 @@ export async function GET() {
       } catch (error) {
         results[collectionName] = {
           exists: false,
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         }
       }
     }
@@ -178,7 +178,7 @@ export async function GET() {
     return NextResponse.json(
       { 
         success: false,
-        error: 'Database check failed: ' + error.message
+        error: 'Database check failed: ' + (error instanceof Error ? error.message : String(error))
       },
       { status: 500 }
     )

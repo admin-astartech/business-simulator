@@ -28,6 +28,9 @@ export default function TikTokAccountsSection({ profiles, citizens }: TikTokAcco
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {profiles.map((profile) => {
           const citizen = citizens.find(c => c.id === profile.id)
+          if (!citizen) {
+            return null
+          }
           return (
             <TikTokProfileCard 
               key={profile.id} 

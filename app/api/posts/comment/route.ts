@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       { 
         $push: { 
           commentsList: newComment
-        },
+        } as any,
         $inc: {
           comments: 1
         },

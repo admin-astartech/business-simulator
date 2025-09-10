@@ -282,6 +282,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 65192,
         "age": 46,
         "company": "Hood, Sims and Wood",
+        "gender": "female",
         "personality": {
             "traits": [
                 "architectural thinking",
@@ -567,6 +568,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 150000,
         "age": 52,
         "company": "Thompson Enterprises",
+        "gender": "male",
         "personality": {
             "traits": [
                 "calm",
@@ -834,6 +836,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 101253,
         "age": 50,
         "company": "Arnold Group",
+        "gender": "male",
         "personality": {
             "traits": [
                 "architectural thinking",
@@ -1109,6 +1112,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 75000,
         "age": 32,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -1383,6 +1387,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 40158,
         "age": 36,
         "company": "Patterson-Parker",
+        "gender": "male",
         "personality": {
             "traits": [
                 "visionary",
@@ -1663,6 +1668,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 80000,
         "age": 45,
         "company": "SalesPro Solutions",
+        "gender": "male",
         "personality": {
             "traits": [
                 "visionary",
@@ -1937,6 +1943,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 35000,
         "age": 27,
         "company": "MarketForce Inc",
+        "gender": "female",
         "personality": {
             "traits": [
                 "storyteller",
@@ -2212,6 +2219,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 120000,
         "age": 46,
         "company": "Wright Management",
+        "gender": "male",
         "personality": {
             "traits": [
                 "strategic",
@@ -2487,6 +2495,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 140000,
         "age": 46,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "calm",
@@ -2754,6 +2763,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 42000,
         "age": 29,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "curious",
@@ -3032,6 +3042,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 150000,
         "age": 44,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "visionary",
@@ -3318,6 +3329,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 144724,
         "age": 36,
         "company": "Christensen and Sons",
+        "gender": "male",
         "personality": {
             "traits": [
                 "system thinker",
@@ -3589,6 +3601,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 90000,
         "age": 39,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "decisive",
@@ -3881,6 +3894,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 75000,
         "age": 32,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -4158,6 +4172,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 30000,
         "age": 22,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "curious",
@@ -4436,6 +4451,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 91691,
         "age": 29,
         "company": "Harris-Alexander",
+        "gender": "female",
         "personality": {
             "traits": [
                 "reliable",
@@ -4712,6 +4728,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 66783,
         "age": 38,
         "company": "Vargas-Blackburn",
+        "gender": "male",
         "personality": {
             "traits": [
                 "accountable",
@@ -4980,6 +4997,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 108953,
         "age": 26,
         "company": "Duncan-Fuller",
+        "gender": "male",
         "personality": {
             "traits": [
                 "ambitious",
@@ -5257,6 +5275,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 160000,
         "age": 47,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "strategic",
@@ -5528,6 +5547,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 180000,
         "age": 55,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "strategic",
@@ -5803,6 +5823,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 50000,
         "age": 32,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "systematic",
@@ -6085,6 +6106,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 35000,
         "age": 29,
         "company": "DataFlow Systems",
+        "gender": "male",
         "personality": {
             "traits": [
                 "curious",
@@ -6363,6 +6385,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 100000,
         "age": 44,
         "company": "Kumar Partners",
+        "gender": "female",
         "personality": {
             "traits": [
                 "accountable",
@@ -6629,6 +6652,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 140000,
         "age": 48,
         "company": "Chen Ventures",
+        "gender": "female",
         "personality": {
             "traits": [
                 "calm",
@@ -6903,6 +6927,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 90000,
         "age": 39,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -7187,6 +7212,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 56807,
         "age": 31,
         "company": "Henderson PLC",
+        "gender": "male",
         "personality": {
             "traits": [
                 "integrated",
@@ -7471,6 +7497,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 30000,
         "age": 24,
         "company": "PeopleFirst Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "ambitious",
@@ -7750,6 +7777,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 130000,
         "age": 50,
         "company": "Foster Industries",
+        "gender": "female",
         "personality": {
             "traits": [
                 "calm",
@@ -8016,6 +8044,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 50000,
         "age": 30,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "curious",
@@ -8293,6 +8322,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 42000,
         "age": 33,
         "company": "FinanceFlow Group",
+        "gender": "female",
         "personality": {
             "traits": [
                 "structured",
@@ -8572,6 +8602,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 85000,
         "age": 36,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -8837,6 +8868,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 110017,
         "age": 23,
         "company": "Brown, Arias and Garza",
+        "gender": "male",
         "personality": {
             "traits": [
                 "curious",
@@ -9119,6 +9151,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 35000,
         "age": 29,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "storyteller",
@@ -9409,6 +9442,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 45000,
         "age": 28,
         "company": "Global Dynamics",
+        "gender": "male",
         "personality": {
             "traits": [
                 "reliable",
@@ -9675,6 +9709,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 30000,
         "age": 22,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "storyteller",
@@ -9954,6 +9989,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 146668,
         "age": 49,
         "company": "Bray Group",
+        "gender": "male",
         "personality": {
             "traits": [
                 "composed",
@@ -10240,6 +10276,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 107765,
         "age": 43,
         "company": "Gray PLC",
+        "gender": "female",
         "personality": {
             "traits": [
                 "accountable",
@@ -10503,6 +10540,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 38000,
         "age": 26,
         "company": "Creative Studios",
+        "gender": "female",
         "personality": {
             "traits": [
                 "creative",
@@ -10778,6 +10816,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 139958,
         "age": 41,
         "company": "Harper Group",
+        "gender": "male",
         "personality": {
             "traits": [
                 "systematic",
@@ -11064,6 +11103,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 80000,
         "age": 39,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "systematic",
@@ -11350,6 +11390,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 45000,
         "age": 31,
         "company": "InnovateTech",
+        "gender": "male",
         "personality": {
             "traits": [
                 "systematic",
@@ -11617,6 +11658,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 70000,
         "age": 31,
         "company": "Lee Global Corp",
+        "gender": "female",
         "personality": {
             "traits": [
                 "decisive",
@@ -11888,6 +11930,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 65641,
         "age": 22,
         "company": "Spence, Hunt and Salazar",
+        "gender": "female",
         "personality": {
             "traits": [
                 "reliable",
@@ -12156,6 +12199,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 60000,
         "age": 42,
         "company": "TechCorp Solutions",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -12430,6 +12474,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 110000,
         "age": 39,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "visionary",
@@ -12707,6 +12752,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 35378,
         "age": 36,
         "company": "Anderson-Brown",
+        "gender": "female",
         "personality": {
             "traits": [
                 "decisive",
@@ -12985,6 +13031,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 65000,
         "age": 32,
         "company": "Lee Global Corp",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -13256,6 +13303,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 60000,
         "age": 38,
         "company": "OperateMax Ltd",
+        "gender": "male",
         "personality": {
             "traits": [
                 "decisive",
@@ -13542,6 +13590,7 @@ export const citizensData: Citizen[] = [
         "monetaryValue": 43665,
         "age": 46,
         "company": "Patel, Garcia and Jones",
+        "gender": "male",
         "personality": {
             "traits": [
                 "calm",

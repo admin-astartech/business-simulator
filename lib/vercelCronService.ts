@@ -36,7 +36,7 @@ export class VercelCronService {
    * Run all scheduled tasks (called by Vercel cron)
    */
   public async runAllTasks(): Promise<{ success: boolean; results: any[] }> {
-    const results = []
+    const results: Array<{ task: string; success: boolean; error?: string }> = []
     
     try {
       console.log('🚀 Running all Vercel cron tasks...')
@@ -48,7 +48,7 @@ export class VercelCronService {
         results.push({ task: 'citizenStatus', success: true })
       } catch (error) {
         console.error('❌ Citizen status update failed:', error)
-        results.push({ task: 'citizenStatus', success: false, error: error.message })
+        results.push({ task: 'citizenStatus', success: false, error: error instanceof Error ? error.message : String(error) })
       }
 
       // Check unread messages
@@ -58,7 +58,7 @@ export class VercelCronService {
         results.push({ task: 'unreadMessages', success: true })
       } catch (error) {
         console.error('❌ Unread messages check failed:', error)
-        results.push({ task: 'unreadMessages', success: false, error: error.message })
+        results.push({ task: 'unreadMessages', success: false, error: error instanceof Error ? error.message : String(error) })
       }
 
       // Generate social media posts
@@ -68,7 +68,7 @@ export class VercelCronService {
         results.push({ task: 'socialMediaPosts', success: true })
       } catch (error) {
         console.error('❌ Social media posts generation failed:', error)
-        results.push({ task: 'socialMediaPosts', success: false, error: error.message })
+        results.push({ task: 'socialMediaPosts', success: false, error: error instanceof Error ? error.message : String(error) })
       }
 
       // Simulate citizen engagement
@@ -78,7 +78,7 @@ export class VercelCronService {
         results.push({ task: 'citizenEngagement', success: true })
       } catch (error) {
         console.error('❌ Citizen engagement simulation failed:', error)
-        results.push({ task: 'citizenEngagement', success: false, error: error.message })
+        results.push({ task: 'citizenEngagement', success: false, error: error instanceof Error ? error.message : String(error) })
       }
 
       // Simulate citizen commenting
@@ -88,7 +88,7 @@ export class VercelCronService {
         results.push({ task: 'citizenCommenting', success: true })
       } catch (error) {
         console.error('❌ Citizen commenting simulation failed:', error)
-        results.push({ task: 'citizenCommenting', success: false, error: error.message })
+        results.push({ task: 'citizenCommenting', success: false, error: error instanceof Error ? error.message : String(error) })
       }
 
       console.log('✅ All Vercel cron tasks completed')
@@ -131,7 +131,7 @@ export class VercelCronService {
       }
     } catch (error) {
       console.error(`❌ Task ${taskName} failed:`, error)
-      return { success: false, error: error.message }
+      return { success: false, error: error instanceof Error ? error.message : String(error) }
     }
   }
 

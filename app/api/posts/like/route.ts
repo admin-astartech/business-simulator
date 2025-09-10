@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     
     if (isAlreadyLiked) {
       // Remove like
-      updatedLikedBy = likedBy.filter(id => id !== userId)
+      updatedLikedBy = likedBy.filter((id: string) => id !== userId)
       updatedLikes = Math.max(0, (post.likes || 0) - 1)
     } else {
       // Add like
